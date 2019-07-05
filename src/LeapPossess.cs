@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using Leap;
 using Leap.Unity;
 
@@ -69,9 +68,6 @@ namespace ExtraltodeusPlugin
                 frame = provider.CurrentFrame;
                 hands = frame.Hands;
 
-
-
-
                 if (SuperController.singleton.isOVR)
                 {
                     mainCamera = SuperController.singleton.ViveCenterCamera;
@@ -80,33 +76,6 @@ namespace ExtraltodeusPlugin
                 {
                     mainCamera = SuperController.singleton.lookCamera;
                 }
-
-                JSONStorableFloat cameraRecess = new JSONStorableFloat("Camera Recess", 0.0f, 0f, .2f, true);
-                UIDynamicSlider recessSlider = CreateSlider(cameraRecess);
-                recessSlider.slider.onValueChanged.AddListener(delegate (float val)
-                {
-                    Possessor possessor = SuperController.FindObjectsOfType(typeof(Possessor)).Where(p => p.name == "CenterEye").Select(p => p as Possessor).First();
-                    //possessor is linked to cameras position so hold possessor still while moving camera
-                    Vector3 pos = possessor.transform.position;
-                    mainCamera.transform.position = pos - mainCamera.transform.rotation * Vector3.forward * val;
-                    possessor.transform.position = pos;
-                });
-
-                JSONStorableFloat clipDistance = new JSONStorableFloat("Clip Distance", 0.01f, 0.01f, .2f, true);
-                UIDynamicSlider clipSlider = CreateSlider(clipDistance);
-                clipSlider.slider.onValueChanged.AddListener(delegate (float val)
-                {
-                    mainCamera.nearClipPlane = val;
-                });
-
-                UIDynamicButton applyClip = CreateButton("Camera clip preset", true);
-                applyClip.button.onClick.AddListener(delegate ()
-                {
-                    cameraRecess.val = 0.06f;
-                    clipDistance.val = 0.08f;
-                });
-
-
             }
             catch (Exception e)
             {
